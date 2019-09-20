@@ -46,7 +46,7 @@ mutate(sectors = recode(department_name, "AGING" = "HEALTH",
                           "AIRPORTS" = "TRANSPORTATION",
                           "HARBOR" = "TRANSPORTATION",
                           "TRANSPORTATION" = "TRANSPORTATION",
-                          "WATER AND POWER" = "WATER",
+                          "WATER AND POWER" = "WATER AND POWER",
                           .default = "OTHER")) %>%
 mutate(sectors = recode(sectors, "HOUSING" = "CITY PLANNING")) %>%
 
@@ -56,13 +56,14 @@ group_by(budget_fiscal_year,sectors) %>%
 summarise(total_expenditures = sum(total_expenditures , na.rm = TRUE)) %>%
 view() %>%
   
-#ggplot(aes(x = sectors, y = total_expenditures))+
-#geom_point()+
+ggplot(aes(x = sectors, y = total_expenditures)) + 
+  geom_point() +
+  facet_grid(~budget_fiscal_year)
 
 
 
   
- # write_csv( path = "data/sectors_complete.csv")
+#write_csv( path = "data/sectors_complete.csv")
 
 
   
