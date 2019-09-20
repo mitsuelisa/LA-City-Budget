@@ -3,22 +3,20 @@ library(readxl)
 library(readr)
 library(janitor)
 library(dplyr)
-library(ggplot2)
 
 
 City_Budget_and_Expenditures <- read_excel("data/City_Budget_and_Expenditures.xlsx") %>% 
   clean_names()
-  
+
 LA_Expenditures_By_Year <- City_Budget_and_Expenditures %>% 
-# This is me trying to separate WATER from POWER and failing 
-#  filter(department_name == "WATER AND POWER") %>% 
-# filter(fund_name == contains("WATER", "WS")) %>%
-# mutate(department_name = recode("WATER", .default = "POWER")) %>%
+  # filter(department_name == "WATER AND POWER") %>% 
+  # filter(fund_name == contains("WATER", "WS")) %>%
+  # mutate(department_name = recode("WATER", .default = "POWER")) %>%
   
-select(budget_fiscal_year,department_name,total_expenditures) %>% 
-group_by(budget_fiscal_year,department_name) %>% 
-summarise(total_expenditures = sum(total_expenditures , na.rm = TRUE)) %>%
-mutate(sectors = recode(department_name, "AGING" = "HEALTH", 
+  select(budget_fiscal_year,department_name,total_expenditures) %>% 
+  group_by(budget_fiscal_year,department_name) %>% 
+  summarise(total_expenditures = sum(total_expenditures , na.rm = TRUE)) %>%
+  mutate(sectors = recode(department_name, "AGING" = "HEALTH", 
                           "INFORMATION TECHNOLOGY AGENCY" = "COMMUNICATION",
                           "CITY EMPLOYEES RETIREMENT SYSTEM" = "EDUCATION & CULTURE", 
                           "CULTURAL AFFAIRS" = "EDUCATION & CULTURE",
@@ -50,21 +48,42 @@ mutate(sectors = recode(department_name, "AGING" = "HEALTH",
                           "TRANSPORTATION" = "TRANSPORTATION",
                           "WATER AND POWER" = "WATER AND POWER",
                           .default = "OTHER")) %>%
-mutate(sectors = recode(sectors, "HOUSING" = "CITY PLANNING")) %>%
-
-
-select(budget_fiscal_year,sectors,total_expenditures) %>% 
-group_by(budget_fiscal_year,sectors) %>% 
-summarise(total_expenditures = sum(total_expenditures , na.rm = TRUE)) %>%
-#view() %>%
+  mutate(sectors = recode(sectors, "HOUSING" = "CITY PLANNING")) %>%
   
-ggplot(aes(x = sectors, y = total_expenditures)) + 
-  geom_point()
-#facet_grid(~budget_fiscal_year)
-
   
+  select(budget_fiscal_year,sectors,total_expenditures) %>% 
+  group_by(budget_fiscal_year,sectors) %>% 
+  summarise(total_expenditures = sum(total_expenditures , na.rm = TRUE)) 
+
+LA_Expenditures_By_Year
+
+#ggplot(LA_Expenditures_By_Year, aes(x = sectors, y = total_expenditures, fill = sectors)) + 
+  #geom_col() +
+  #facet_wrap(~budget_fiscal_year) 
+  
+# ggplot(LA_Expenditures_By_Year,
+      #  aes(x = budget_fiscal_year, y = total_expenditures, fill = sectors)) + 
+ # geom_col(position = 'fill')+
+  #  theme_minimal()+
+ # labs(title = "LA")+
+ # xlab("Year")+
+# ylab("Percentage of total expenditures")
+ 
+ ggplot(LA_Expenditures_By_Year,
+        aes(x = budget_fiscal_year, y = total_expenditures, fill = sectors)) + 
+   geom_col()+
+  theme_minimal()+
+  labs(title = "LA")+
+  xlab("Year")+
+  ylab("Expenditures")
+  
+  
+  
+  
+
+ 
+
+
+
+
 #write_csv( path = "data/sectors_complete.csv")
-
-
-  
-  
