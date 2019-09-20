@@ -1,0 +1,48 @@
+---
+title: "NYC"
+author: "Mitsue Guerrero"
+date: "9/19/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(readr)
+library(janitor)
+library(dplyr)
+library(tidyr)
+library(stringr)
+
+
+```
+
+```{r}
+
+NYC <- read_excel("data/NYC3.xlsx", na = "-") %>% clean_names()
+Tidy_NYC <- NYC %>% gather(key = "year", value = "expenditure", -x1) %>%
+  filter(str_detect(x1, "TOTAL DEPT"))
+  
+Group_NYC <- Tidy_NYC %>%
+group_by(year,x1) %>%
+  summarise(expenditure = sum(expenditure, na.rm = TRUE )) %>%
+  
+  #str_remove(Tidy_NYC$year,"x") %>%
+  #filter(year == "x2009","x2010", "x2011", "x2012", "x2013", "x2014", "x2015", "x2016", "x2017", "x2018")) %>%
+  
+  #view()
+
+write_csv( path = "data/NYC_sectors.csv")
+
+  
+#Group_NYC %>%  %>%
+#as.numeric(year) %>%
+     
+
+
+#NYC_tidy <- NYC %>% gather(key = "year",value = "expenditure", c(x2018:x2009))
+
+
+
+```
